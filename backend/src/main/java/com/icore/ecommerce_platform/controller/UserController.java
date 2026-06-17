@@ -1,7 +1,6 @@
 package com.icore.ecommerce_platform.controller;
 
 import com.icore.ecommerce_platform.dao.ProductRepository;
-import com.icore.ecommerce_platform.dao.UserRepository;
 import com.icore.ecommerce_platform.dto.LoginFormDto;
 import com.icore.ecommerce_platform.dto.RegistrationFormDto;
 import com.icore.ecommerce_platform.dto.ResetPasswordDto;
@@ -18,14 +17,12 @@ import java.util.List;
 public class UserController {
 
     private UserService userService;
-    private UserRepository userRepository;
     private ForgotPasswordImpl forgotPassword;
     private ProductRepository productRepository;
 
     @Autowired
-    public UserController(UserService userService, UserRepository userRepository, ForgotPasswordImpl forgotPassword, ProductRepository productRepository) {
+    public UserController(UserService userService, ForgotPasswordImpl forgotPassword, ProductRepository productRepository) {
         this.userService = userService;
-        this.userRepository = userRepository;
         this.forgotPassword = forgotPassword;
         this.productRepository = productRepository;
     }
@@ -39,11 +36,6 @@ public class UserController {
     public String userLogin(@RequestBody LoginFormDto loginFormDto) {
         return userService.userLogin(loginFormDto);
     }
-
-//    @PostMapping("/view/{email}")
-//    public User demo(@PathVariable("email") String email) {
-//        return userRepository.getUserByMail(email);
-//    }
 
     @PostMapping("/forgotPassword")
     public String demo(@RequestParam String username) {

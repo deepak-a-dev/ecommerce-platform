@@ -15,26 +15,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByUsername(String username);
 
-    //
-//    @Query("SELECT u FROM User u WHERE u.username = :username AND u.password = :password")
-//    User credVerification(String username, String password);
-//
     @Query("SELECT u FROM User u WHERE u.username = :username")
     User usernameVerification(String username);
 
-    //
-    @Query("SELECT u FROM User u WHERE u.username = :username AND u.password = :password")
-    Optional<User> usernamePasswordMatches(String username, String password);
-
-//    @Query("SELECT u FROM User u JOIN u.tokens t JOIN u.orders o WHERE u.email = :email")
-//    User getUserByMail(String email);
-
     @Query("SELECT u FROM User u")
     List<User> getAllUsers();
-
-
-    @Query("SELECT u FROM User u WHERE u.email = :mail")
-    User getUserByMail(String mail);
 
     @Transactional
     @Modifying

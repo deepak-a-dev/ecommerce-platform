@@ -40,15 +40,6 @@ public class ProductController {
         return productService.removeProduct(productId);
     }
 
-//    @PatchMapping("/product/update/{id}")
-//    public String updateProduct(@PathVariable Integer id,
-//                                @RequestParam(required = false) String productName,
-//                                @RequestParam(required = false) String brandName,
-//                                @RequestParam(required = false) String productCategory) {
-//        productService.updateProduct(id, productName, brandName, productCategory);
-//        return "PRODUCT UPDATED SUCCESSFULLY";
-//    }
-
     @PatchMapping("/product/update/{id}")
     public String updateProduct(@PathVariable Integer id, @RequestBody Map<String, Object> fields) {
         return productService.updateProduct(id, fields);

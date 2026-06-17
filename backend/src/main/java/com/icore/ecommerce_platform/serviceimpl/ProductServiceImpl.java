@@ -39,35 +39,12 @@ public class ProductServiceImpl implements ProductService {
         if (temp == null) {
             return "Product with id -> " + productId + " doesn't exist";
         } else {
-            //productRepository.deleteById(productId);
             productRepository.removeProductById(productId);
             return "Product with id -> " + productId + " removed successfully";
         }
 
     }
 
-//    @Override
-//    public String updateProduct(Integer productId, String productName, String brandName, String productCategory) {
-//        Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("RECORD NOT FOUND"));
-//        if (productName != null) {
-//            product.setProductName(productName);
-//        }
-//        if (brandName != null) {
-//            product.setBrandName(brandName);
-//        }
-//        if (productCategory != null) {
-//            product.setProductCategory(productCategory);
-//        }
-
-    /// /        if (productPrice != 0) {
-    /// /            product.setProductPrice(productPrice);
-    /// /        }
-    /// /        if (productStatus != false) {
-    /// /            product.setProductStatus(productStatus);
-    /// /        }
-//        productRepository.save(product);
-//        return "Product Updated...";
-//    }
     @Override
     public String updateProduct(int id, Map<String, Object> fields) {
         Product existingProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("RECORD NOT FOUND"));

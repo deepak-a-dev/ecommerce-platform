@@ -90,29 +90,6 @@ public class UserServiceImpl implements UserService {
         return "Login Success.\n\nYour token = " + token;
     }
 
-
-//        User user = userRepository.usernameVerification(loginFormDto.getUsername());
-//        if (user != null) {
-//            String password = loginFormDto.getPassword();
-//            String encodedPassword = user.getPassword();
-//            Boolean isPasswordCorrect = passwordEncoder.matches(password, encodedPassword);
-//            if (isPasswordCorrect) {
-//                Optional<User> u = userRepository.usernamePasswordMatches(loginFormDto.getUsername(), user.getPassword());
-//                if (u.isPresent()) {
-//                    String token = jwtService.generateToken(user);
-//                    return "Login Success\n\nYour token = "+token;
-//                } else {
-//                    return "Login Failed";
-//                }
-//            } else {
-//                return "Incorrect Password. Try Again";
-//            }
-//        } else {
-//            return "Incorrect Username. Try Again";
-//        }
-//    }
-
-
     @Override
     public List<User> getAllUsers() {
         return userRepository.getAllUsers();

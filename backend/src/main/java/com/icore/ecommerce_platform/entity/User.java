@@ -44,14 +44,6 @@ public class User implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-
-//    @OneToMany(mappedBy = "user")
-//    private List<Token> tokens;
-//
-//
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-//    private List<Order> orders;
-
     // implementing methods from UserDetails
 
     @Override
