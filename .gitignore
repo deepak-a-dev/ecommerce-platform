@@ -10,6 +10,9 @@ out/
 *.ipr
 .vscode/
 
+# ---- Local planning docs (not for publishing) ----
+ROADMAP.md
+
 # ---- Secrets / local config ----
 .env
 *.env.local
