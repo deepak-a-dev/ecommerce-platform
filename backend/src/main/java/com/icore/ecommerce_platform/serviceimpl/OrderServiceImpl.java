@@ -18,6 +18,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Default implementation of {@link OrderService}. Builds an order from the
+ * submitted product list, persisting each line item and the order total.
+ */
 @Service
 public class OrderServiceImpl implements OrderService {
 

@@ -8,6 +8,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Component;
 
+/**
+ * On logout, marks the caller's JWT as logged-out in the token store so it can no
+ * longer be used for authentication, even though it has not yet expired.
+ */
 @Component
 public class CustomLogoutHandler implements LogoutHandler {
 

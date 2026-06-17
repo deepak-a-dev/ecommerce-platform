@@ -14,6 +14,11 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.function.Function;
 
+/**
+ * Issues and validates JSON Web Tokens. Tokens are signed with an HMAC key derived
+ * from the {@code app.jwt.secret} property; validity is additionally cross-checked
+ * against the token store so that logged-out tokens are rejected.
+ */
 @Service
 public class JwtServiceImpl {
 

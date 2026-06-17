@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST endpoint for placing customer orders under {@code /api/order}.
+ */
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {

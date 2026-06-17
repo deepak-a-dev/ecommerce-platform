@@ -11,6 +11,9 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Default implementation of {@link ProductService}.
+ */
 @Service
 public class ProductServiceImpl implements ProductService {
 

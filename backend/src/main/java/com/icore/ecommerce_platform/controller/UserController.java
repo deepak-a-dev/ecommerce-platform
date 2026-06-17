@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST endpoints for user-facing operations under {@code /api/user}:
+ * registration, login, password reset (OTP by email), and public product browsing.
+ */
 @RestController
 @RequestMapping("api/user")
 public class UserController {

@@ -13,6 +13,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Random;
 
+/**
+ * Handles the forgot-password flow: generating a time-limited OTP, emailing it to
+ * the user, and verifying it before updating the password.
+ */
 @Service
 public class ForgotPasswordImpl {
     private UserRepository userRepository;

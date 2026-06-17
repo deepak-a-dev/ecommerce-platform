@@ -10,6 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST endpoints for admin-only operations under {@code /api/admin}:
+ * managing the product catalog and listing users. Restricted to the
+ * {@code ADMIN} authority.
+ */
 @RestController
 @RequestMapping("api/admin")
 public class ProductController {

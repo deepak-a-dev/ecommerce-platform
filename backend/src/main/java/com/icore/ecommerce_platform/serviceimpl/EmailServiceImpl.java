@@ -6,6 +6,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+/**
+ * Sends simple text emails (e.g. password-reset OTPs) via the configured SMTP server.
+ */
 @Service
 public class EmailServiceImpl {
 

@@ -16,6 +16,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Spring Security configuration for stateless, JWT-based authentication.
+ * Declares which routes are public vs. authenticated/admin-only, registers the
+ * {@link JwtAuthenticationFilter}, the BCrypt password encoder, and logout handling.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {

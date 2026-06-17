@@ -6,6 +6,10 @@ import com.icore.ecommerce_platform.entity.User;
 
 import java.util.List;
 
+/**
+ * Business operations for user accounts: registration, login (JWT issuance),
+ * and admin user listing.
+ */
 public interface UserService {
 
     String userRegister(RegistrationFormDto registrationFormDto);

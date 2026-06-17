@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Default implementation of {@link UserService}.
+ */
 @Service
 public class UserServiceImpl implements UserService {
 

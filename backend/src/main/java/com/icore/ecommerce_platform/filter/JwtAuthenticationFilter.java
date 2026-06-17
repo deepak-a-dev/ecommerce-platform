@@ -16,6 +16,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * Per-request filter that extracts the Bearer token from the {@code Authorization}
+ * header, validates it, and sets the authenticated user in the security context.
+ * Requests without a valid token simply pass through unauthenticated.
+ */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
