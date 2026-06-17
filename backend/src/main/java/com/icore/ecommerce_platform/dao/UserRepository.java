@@ -14,13 +14,15 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByUsername(String username);
-//
+
+    //
 //    @Query("SELECT u FROM User u WHERE u.username = :username AND u.password = :password")
 //    User credVerification(String username, String password);
 //
     @Query("SELECT u FROM User u WHERE u.username = :username")
     User usernameVerification(String username);
-//
+
+    //
     @Query("SELECT u FROM User u WHERE u.username = :username AND u.password = :password")
     Optional<User> usernamePasswordMatches(String username, String password);
 

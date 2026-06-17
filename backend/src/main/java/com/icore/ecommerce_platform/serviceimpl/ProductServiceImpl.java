@@ -58,22 +58,22 @@ public class ProductServiceImpl implements ProductService {
 //        if (productCategory != null) {
 //            product.setProductCategory(productCategory);
 //        }
-////        if (productPrice != 0) {
-////            product.setProductPrice(productPrice);
-////        }
-////        if (productStatus != false) {
-////            product.setProductStatus(productStatus);
-////        }
+
+    /// /        if (productPrice != 0) {
+    /// /            product.setProductPrice(productPrice);
+    /// /        }
+    /// /        if (productStatus != false) {
+    /// /            product.setProductStatus(productStatus);
+    /// /        }
 //        productRepository.save(product);
 //        return "Product Updated...";
 //    }
-
     @Override
-    public String updateProduct(int id, Map<String, Object>fields) {
+    public String updateProduct(int id, Map<String, Object> fields) {
         Product existingProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("RECORD NOT FOUND"));
 
         if (existingProduct != null) {
-            fields.forEach((key,value) -> {
+            fields.forEach((key, value) -> {
                 Field field = ReflectionUtils.findField(Product.class, key);
                 field.setAccessible(true);
                 ReflectionUtils.setField(field, existingProduct, value);

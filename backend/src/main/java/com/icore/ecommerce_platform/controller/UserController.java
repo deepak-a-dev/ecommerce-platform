@@ -18,7 +18,7 @@ import java.util.List;
 public class UserController {
 
     private UserService userService;
-    private  UserRepository userRepository;
+    private UserRepository userRepository;
     private ForgotPasswordImpl forgotPassword;
     private ProductRepository productRepository;
 

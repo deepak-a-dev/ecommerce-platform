@@ -40,6 +40,5 @@ public class CustomLogoutHandler implements LogoutHandler {
         }
 
 
-
     }
 }

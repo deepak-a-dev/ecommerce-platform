@@ -110,7 +110,7 @@ public class ForgotPasswordImpl {
         int otpLength = 6;
         int otp = 0;
         Random random = new Random();
-        for(int i = 0; i < otpLength; i++) {
+        for (int i = 0; i < otpLength; i++) {
             int digit = random.nextInt(10);
             otp = otp * 10 + digit;
         }

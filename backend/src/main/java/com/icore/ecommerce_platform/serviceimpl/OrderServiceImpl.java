@@ -55,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
                 orderItem.setProductName(product.getProductName());
                 orderItem.setUnitPrice(product.getProductPrice());
                 orderItem.setQty(item.getQty());
-                orderItem.setSubTotal(item.getQty()*product.getProductPrice());
+                orderItem.setSubTotal(item.getQty() * product.getProductPrice());
                 orderItemRepository.save(orderItem);
                 cart.add(orderItem);
                 total = total + item.getQty() * product.getProductPrice();

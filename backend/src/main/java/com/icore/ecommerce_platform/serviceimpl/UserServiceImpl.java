@@ -55,7 +55,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     public String userLogin(LoginFormDto loginFormDto) {
 
@@ -72,7 +71,7 @@ public class UserServiceImpl implements UserService {
         // before saving query the data
         List<Token> validTokenListByUser = tokenRepository.findAllTokenByUser(user.getUserId());
         if (!validTokenListByUser.isEmpty()) {
-            validTokenListByUser.forEach(t-> {
+            validTokenListByUser.forEach(t -> {
                 t.setLoggedOut(true);
             });
         }
@@ -90,8 +89,6 @@ public class UserServiceImpl implements UserService {
 
         return "Login Success.\n\nYour token = " + token;
     }
-
-
 
 
 //        User user = userRepository.usernameVerification(loginFormDto.getUsername());
