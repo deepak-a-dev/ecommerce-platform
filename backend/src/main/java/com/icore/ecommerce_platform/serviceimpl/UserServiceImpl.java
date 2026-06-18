@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.icore.ecommerce_platform.exception.DuplicateResourceException;
 import com.icore.ecommerce_platform.dto.UserPublicAccessDto;
-
+import com.icore.ecommerce_platform.dto.AuthResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public String userLogin(LoginFormDto loginFormDto) {
+    public AuthResponseDto userLogin(LoginFormDto loginFormDto) {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
         tokenRepository.save(token1);
 
 
-        return "Login Success.\n\nYour token = " + token;
+        return new AuthResponseDto(token);
     }
 
     @Override

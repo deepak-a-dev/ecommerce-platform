@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import com.icore.ecommerce_platform.dto.UserPublicAccessDto;
+import com.icore.ecommerce_platform.dto.AuthResponseDto;
 
 import java.util.List;
 
@@ -41,8 +42,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String userLogin(@RequestBody LoginFormDto loginFormDto) {
-        return userService.userLogin(loginFormDto);
+    public ResponseEntity<AuthResponseDto> userLogin(@RequestBody LoginFormDto loginFormDto) {
+        AuthResponseDto response = userService.userLogin(loginFormDto);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/forgotPassword")
