@@ -1,11 +1,12 @@
 package com.icore.ecommerce_platform.service;
 
 import com.icore.ecommerce_platform.dto.OrderFormDto;
+import com.icore.ecommerce_platform.dto.OrderResponseDto;
 
 /**
  * Business operations for customer orders.
  */
 public interface OrderService {
 
-    String placeOrder(OrderFormDto orderFormDto);
+    OrderResponseDto placeOrder(OrderFormDto orderFormDto);
 }

@@ -17,6 +17,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import com.icore.ecommerce_platform.exception.ResourceNotFoundException;
+import com.icore.ecommerce_platform.dto.OrderResponseDto;
+import com.icore.ecommerce_platform.dto.OrderItemResponseDto;
+import jakarta.transaction.Transactional;
 
 /**
  * Default implementation of {@link OrderService}. Builds an order from the
@@ -38,39 +42,49 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public String placeOrder(OrderFormDto orderFormDto) {
-
-
+    @Transactional
+    public OrderResponseDto placeOrder(OrderFormDto orderFormDto) {
         User user = userRepository.usernameVerification(orderFormDto.getUsername());
-        double total;
+        if (user == null) {
+            throw new ResourceNotFoundException("User '" + orderFormDto.getUsername() + "' not found");
+        }
+
         Order order = new Order();
         List<OrderItem> cart = new ArrayList<>();
-        total = 0.0;
-        List<ProductNameQtyDto> list = orderFormDto.getProductList();
-        for (ProductNameQtyDto item : list) {
-            ProductAvailabilityDto productAvailabilityDto = productRepository.verifyProductAvailability(item.getProductName());
-            if (productAvailabilityDto == null) {
-                return "Sorry! Looks like " + item.getProductName() + " is currently unavailable";
-            } else {
-                Product product = productRepository.getProductByProductName(item.getProductName());
-                OrderItem orderItem = new OrderItem();
-                orderItem.setProduct(product);
-                orderItem.setOrder(order);
-                orderItem.setProductName(product.getProductName());
-                orderItem.setUnitPrice(product.getProductPrice());
-                orderItem.setQty(item.getQty());
-                orderItem.setSubTotal(item.getQty() * product.getProductPrice());
-                orderItemRepository.save(orderItem);
-                cart.add(orderItem);
-                total = total + item.getQty() * product.getProductPrice();
+        double total = 0.0;
+
+        for (ProductNameQtyDto item : orderFormDto.getProductList()) {
+            ProductAvailabilityDto availability = productRepository.verifyProductAvailability(item.getProductName());
+            if (availability == null) {
+                throw new ResourceNotFoundException(
+                        "Product '" + item.getProductName() + "' is currently unavailable");
             }
+
+            Product product = productRepository.getProductByProductName(item.getProductName());
+            OrderItem orderItem = new OrderItem();
+            orderItem.setProduct(product);
+            orderItem.setOrder(order);
+            orderItem.setProductName(product.getProductName());
+            orderItem.setUnitPrice(product.getProductPrice());
+            orderItem.setQty(item.getQty());
+            orderItem.setSubTotal(item.getQty() * product.getProductPrice());
+            orderItemRepository.save(orderItem);
+            cart.add(orderItem);
+            total += item.getQty() * product.getProductPrice();
         }
+
         order.setDateOfOrder(LocalDateTime.now());
         order.setOrderItemList(cart);
         order.setTotal(total);
         order.setUser(user);
         orderRepository.save(order);
 
-        return null;
+        List<OrderItemResponseDto> items = cart.stream()
+                .map(oi -> new OrderItemResponseDto(
+                        oi.getProductName(), oi.getQty(), oi.getUnitPrice(), oi.getSubTotal()))
+                .toList();
+
+        return new OrderResponseDto(
+                order.getOrderId(), user.getUsername(), order.getDateOfOrder(), total, items);
     }
 }
