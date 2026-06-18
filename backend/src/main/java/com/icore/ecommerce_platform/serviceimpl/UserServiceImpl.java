@@ -12,6 +12,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.icore.ecommerce_platform.exception.DuplicateResourceException;
+import com.icore.ecommerce_platform.dto.UserPublicAccessDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,24 +39,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String userRegister(RegistrationFormDto registrationFormDto) {
-
-        User check = userRepository.usernameVerification(registrationFormDto.getUsername());
-        if (check != null) {
-            return "USERNAME ALREADY EXISTS. PLEASE CHOOSE A DIFFERENT USERNAME.";
-        } else {
-            User user = new User();
-            user.setFirstName(registrationFormDto.getFirstName());
-            user.setLastName(registrationFormDto.getLastName());
-            user.setPhoneNumber(registrationFormDto.getPhoneNumber());
-            user.setEmail(registrationFormDto.getEmail());
-            user.setUsername(registrationFormDto.getUsername());
-            user.setPassword(passwordEncoder.encode(registrationFormDto.getPassword()));
-            user.setRole(Role.USER);
-            userRepository.save(user);
-            return "REGISTRATION SUCCESSFUL";
+    public UserPublicAccessDto userRegister(RegistrationFormDto registrationFormDto) {
+        User existing = userRepository.usernameVerification(registrationFormDto.getUsername());
+        if (existing != null) {
+            throw new DuplicateResourceException(
+                    "Username '" + registrationFormDto.getUsername() + "' is already taken");
         }
 
+        User user = new User();
+        user.setFirstName(registrationFormDto.getFirstName());
+        user.setLastName(registrationFormDto.getLastName());
+        user.setPhoneNumber(registrationFormDto.getPhoneNumber());
+        user.setEmail(registrationFormDto.getEmail());
+        user.setUsername(registrationFormDto.getUsername());
+        user.setPassword(passwordEncoder.encode(registrationFormDto.getPassword()));
+        user.setRole(Role.USER);
+
+        User saved = userRepository.save(user);
+
+        return new UserPublicAccessDto(
+                saved.getUserId(), saved.getFirstName(), saved.getLastName(),
+                saved.getPhoneNumber(), saved.getEmail(), saved.getUsername());
     }
 
 

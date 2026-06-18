@@ -9,6 +9,9 @@ import com.icore.ecommerce_platform.service.UserService;
 import com.icore.ecommerce_platform.serviceimpl.ForgotPasswordImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import com.icore.ecommerce_platform.dto.UserPublicAccessDto;
 
 import java.util.List;
 
@@ -32,8 +35,9 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String userRegister(@RequestBody RegistrationFormDto registrationFormDto) {
-        return userService.userRegister(registrationFormDto);
+    public ResponseEntity<UserPublicAccessDto> userRegister(@RequestBody RegistrationFormDto registrationFormDto) {
+        UserPublicAccessDto created = userService.userRegister(registrationFormDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PostMapping("/login")

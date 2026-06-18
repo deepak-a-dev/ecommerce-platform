@@ -3,6 +3,7 @@ package com.icore.ecommerce_platform.service;
 import com.icore.ecommerce_platform.dto.LoginFormDto;
 import com.icore.ecommerce_platform.dto.RegistrationFormDto;
 import com.icore.ecommerce_platform.entity.User;
+import com.icore.ecommerce_platform.dto.UserPublicAccessDto;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  */
 public interface UserService {
 
-    String userRegister(RegistrationFormDto registrationFormDto);
+    UserPublicAccessDto userRegister(RegistrationFormDto registrationFormDto);
 
     String userLogin(LoginFormDto loginFormDto);
 
