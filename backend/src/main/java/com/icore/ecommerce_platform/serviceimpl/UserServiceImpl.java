@@ -99,7 +99,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.getAllUsers();
+    public List<UserPublicAccessDto> getAllUsers() {
+        return userRepository.getAllUsers().stream()
+                .map(u -> new UserPublicAccessDto(
+                        u.getUserId(), u.getFirstName(), u.getLastName(),
+                        u.getPhoneNumber(), u.getEmail(), u.getUsername()))
+                .toList();
     }
 }

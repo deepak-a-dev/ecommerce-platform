@@ -16,7 +16,7 @@ public interface UserService {
 
     UserPublicAccessDto userRegister(RegistrationFormDto registrationFormDto);
 
-    AuthResponseDto userLogin(LoginFormDto loginFormDto);;
+    AuthResponseDto userLogin(LoginFormDto loginFormDto);
 
-    List<User> getAllUsers();
+    List<UserPublicAccessDto> getAllUsers();
 }

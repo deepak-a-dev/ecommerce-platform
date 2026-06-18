@@ -1,10 +1,12 @@
 package com.icore.ecommerce_platform.controller;
 
 import com.icore.ecommerce_platform.dao.ProductRepository;
+import com.icore.ecommerce_platform.dto.UserPublicAccessDto;
 import com.icore.ecommerce_platform.entity.Product;
-import com.icore.ecommerce_platform.entity.User;
 import com.icore.ecommerce_platform.service.ProductService;
 import com.icore.ecommerce_platform.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,27 +33,31 @@ public class ProductController {
 
 
     @PostMapping("/product/add")
-    public String addProduct(@RequestBody Product product) {
-        return productService.addProduct(product);
+    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+        Product saved = productService.addProduct(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PostMapping("/product/add_list")
-    public String addProduct(@RequestBody List<Product> productList) {
-        return productService.addProduct(productList);
+    public ResponseEntity<List<Product>> addProduct(@RequestBody List<Product> productList) {
+        List<Product> saved = productService.addProduct(productList);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @DeleteMapping("/product/remove/{id}")
-    public String removeProduct(@PathVariable("id") Integer productId) {
-        return productService.removeProduct(productId);
+    public ResponseEntity<Void> removeProduct(@PathVariable("id") Integer productId) {
+        productService.removeProduct(productId);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/product/update/{id}")
-    public String updateProduct(@PathVariable Integer id, @RequestBody Map<String, Object> fields) {
-        return productService.updateProduct(id, fields);
+    public ResponseEntity<Product> updateProduct(@PathVariable Integer id, @RequestBody Map<String, Object> fields) {
+        Product updated = productService.updateProduct(id, fields);
+        return ResponseEntity.ok(updated);
     }
 
     @GetMapping("/getUsers")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<UserPublicAccessDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 }

@@ -10,13 +10,13 @@ import java.util.Map;
  */
 public interface ProductService {
 
-    String addProduct(Product product);
+    Product addProduct(Product product);
 
-    String addProduct(List<Product> productList);
+    List<Product> addProduct(List<Product> productList);
 
-    String removeProduct(int productId);
+    void removeProduct(int productId);
 
-    String updateProduct(int id, Map<String, Object> fields);
+    Product updateProduct(int id, Map<String, Object> fields);
 
 
 }

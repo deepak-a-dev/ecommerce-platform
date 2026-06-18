@@ -10,6 +10,7 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import com.icore.ecommerce_platform.exception.ResourceNotFoundException;
 
 /**
  * Default implementation of {@link ProductService}.
@@ -24,43 +25,35 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public String addProduct(Product product) {
-        productRepository.save(product);
-        return "PRODUCT ADDED SUCCESSFULLY";
+    public Product addProduct(Product product) {
+        return productRepository.save(product);
     }
 
     @Override
-    public String addProduct(List<Product> productList) {
-        productRepository.saveAll(productList);
-        return "LIST OF PRODUCTS ADDED SUCCESSFULLY";
+    public List<Product> addProduct(List<Product> productList) {
+        return productRepository.saveAll(productList);
     }
 
     @Override
     @Transactional
-    public String removeProduct(int productId) {
-        Product temp = productRepository.getProductById(productId);
-        if (temp == null) {
-            return "Product with id -> " + productId + " doesn't exist";
-        } else {
-            productRepository.removeProductById(productId);
-            return "Product with id -> " + productId + " removed successfully";
+    public void removeProduct(int productId) {
+        Product existing = productRepository.getProductById(productId);
+        if (existing == null) {
+            throw new ResourceNotFoundException("Product with id " + productId + " does not exist");
         }
-
+        productRepository.removeProductById(productId);
     }
 
     @Override
-    public String updateProduct(int id, Map<String, Object> fields) {
-        Product existingProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("RECORD NOT FOUND"));
+    public Product updateProduct(int id, Map<String, Object> fields) {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " does not exist"));
 
-        if (existingProduct != null) {
-            fields.forEach((key, value) -> {
-                Field field = ReflectionUtils.findField(Product.class, key);
-                field.setAccessible(true);
-                ReflectionUtils.setField(field, existingProduct, value);
-            });
-            productRepository.save(existingProduct);
-
-        }
-        return "Product Updated...";
+        fields.forEach((key, value) -> {
+            Field field = ReflectionUtils.findField(Product.class, key);
+            field.setAccessible(true);
+            ReflectionUtils.setField(field, existingProduct, value);
+        });
+        return productRepository.save(existingProduct);
     }
 }
