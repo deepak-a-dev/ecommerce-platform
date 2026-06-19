@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import com.icore.ecommerce_platform.dto.UserPublicAccessDto;
 import com.icore.ecommerce_platform.dto.AuthResponseDto;
+import jakarta.validation.Valid;
 
 import java.util.List;
 import com.icore.ecommerce_platform.dto.MessageResponseDto;
@@ -37,13 +38,13 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserPublicAccessDto> userRegister(@RequestBody RegistrationFormDto registrationFormDto) {
+    public ResponseEntity<UserPublicAccessDto> userRegister(@Valid @RequestBody RegistrationFormDto registrationFormDto) {
         UserPublicAccessDto created = userService.userRegister(registrationFormDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> userLogin(@RequestBody LoginFormDto loginFormDto) {
+    public ResponseEntity<AuthResponseDto> userLogin(@Valid @RequestBody LoginFormDto loginFormDto) {
         AuthResponseDto response = userService.userLogin(loginFormDto);
         return ResponseEntity.ok(response);
     }
@@ -55,7 +56,7 @@ public class UserController {
     }
 
     @PostMapping("/resetPassword")
-    public ResponseEntity<MessageResponseDto> resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
+    public ResponseEntity<MessageResponseDto> resetPassword(@Valid @RequestBody ResetPasswordDto resetPasswordDto) {
         forgotPassword.verifyOtp(resetPasswordDto);
         return ResponseEntity.ok(new MessageResponseDto("Password updated successfully"));
     }
