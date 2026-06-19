@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Random;
+import com.icore.ecommerce_platform.exception.ResourceNotFoundException;
+import com.icore.ecommerce_platform.exception.InvalidRequestException;
 
 /**
  * Handles the forgot-password flow: generating a time-limited OTP, emailing it to
@@ -32,50 +34,45 @@ public class ForgotPasswordImpl {
         this.forgotPasswordRepository = forgotPasswordRepository;
     }
 
-    public String sendOtpBasedOnUsername(String username) {
+    public void sendOtpBasedOnUsername(String username) {
         User user = userRepository.usernameVerification(username);
-        if (user != null) {
-            int otp = otpGenerator();
-            LocalDateTime now = LocalDateTime.now();
-            MailBodyDto mailBodyDto = MailBodyDto.builder()
-                    .to(user.getEmail())
-                    .text("This is the OTP for your Forgot Password request : " + otp + "\nThis OTP will be valid for the next 1 minute.")
-                    .subject("Forgot Password")
-                    .build();
-
-            ForgotPassword fp = ForgotPassword.builder()
-                    .otp(otp)
-                    .creation(now)
-                    .expiration(now.plusMinutes(1))
-                    .user(user)
-                    .build();
-
-
-            emailService.sendSimpleMessage(mailBodyDto);
-            forgotPasswordRepository.save(fp);
-
-            return "Otp sent to your email";
-        } else {
-            return "Username does not exist in the database";
+        if (user == null) {
+            throw new ResourceNotFoundException("Username '" + username + "' does not exist");
         }
+
+        int otp = otpGenerator();
+        LocalDateTime now = LocalDateTime.now();
+        MailBodyDto mailBodyDto = MailBodyDto.builder()
+                .to(user.getEmail())
+                .text("This is the OTP for your Forgot Password request : " + otp + "\nThis OTP will be valid for the next 1 minute.")
+                .subject("Forgot Password")
+                .build();
+
+        ForgotPassword fp = ForgotPassword.builder()
+                .otp(otp)
+                .creation(now)
+                .expiration(now.plusMinutes(1))
+                .user(user)
+                .build();
+
+        emailService.sendSimpleMessage(mailBodyDto);
+        forgotPasswordRepository.save(fp);
     }
 
-    public String verifyOtp(ResetPasswordDto resetPasswordDto) {
+    public void verifyOtp(ResetPasswordDto resetPasswordDto) {
         LocalDateTime now = LocalDateTime.now();
         User user = userRepository.usernameVerification(resetPasswordDto.getUsername());
         ForgotPassword fp = forgotPasswordRepository.getForgotPasswordRecordByOtpAndMail(resetPasswordDto.getOtp(), user, now);
 
         if (fp == null) {
-            return "OTP is incorrect / expired.";
-        } else {
-            if (Objects.equals(resetPasswordDto.getNewPassword(), resetPasswordDto.getRepeatPassword())) {
-                String encodedPassword = passwordEncoder.encode(resetPasswordDto.getNewPassword());
-                userRepository.updatePassword(encodedPassword, user.getUserId());
-                return "Password Updated Successfully";
-            } else {
-                return "Please enter a matching password";
-            }
+            throw new InvalidRequestException("OTP is incorrect or expired");
         }
+        if (!Objects.equals(resetPasswordDto.getNewPassword(), resetPasswordDto.getRepeatPassword())) {
+            throw new InvalidRequestException("Passwords do not match");
+        }
+
+        String encodedPassword = passwordEncoder.encode(resetPasswordDto.getNewPassword());
+        userRepository.updatePassword(encodedPassword, user.getUserId());
     }
 
 

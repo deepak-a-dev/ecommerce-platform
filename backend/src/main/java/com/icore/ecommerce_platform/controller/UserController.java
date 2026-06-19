@@ -15,6 +15,7 @@ import com.icore.ecommerce_platform.dto.UserPublicAccessDto;
 import com.icore.ecommerce_platform.dto.AuthResponseDto;
 
 import java.util.List;
+import com.icore.ecommerce_platform.dto.MessageResponseDto;
 
 /**
  * REST endpoints for user-facing operations under {@code /api/user}:
@@ -48,28 +49,30 @@ public class UserController {
     }
 
     @PostMapping("/forgotPassword")
-    public String demo(@RequestParam String username) {
-        return forgotPassword.sendOtpBasedOnUsername(username);
+    public ResponseEntity<MessageResponseDto> forgotPassword(@RequestParam String username) {
+        forgotPassword.sendOtpBasedOnUsername(username);
+        return ResponseEntity.ok(new MessageResponseDto("OTP sent to your email"));
     }
 
     @PostMapping("/resetPassword")
-    public String resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
-        return forgotPassword.verifyOtp(resetPasswordDto);
+    public ResponseEntity<MessageResponseDto> resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
+        forgotPassword.verifyOtp(resetPasswordDto);
+        return ResponseEntity.ok(new MessageResponseDto("Password updated successfully"));
     }
 
     @GetMapping("/browse/category")
-    public List<String> listCategory() {
-        return productRepository.getCategoryList();
+    public ResponseEntity<List<String>> listCategory() {
+        return ResponseEntity.ok(productRepository.getCategoryList());
     }
 
     @GetMapping("browse/category/{name}")
-    public List<Product> basedOnCategory(@PathVariable("name") String name) {
-        return productRepository.basedOnCategory(name);
+    public ResponseEntity<List<Product>> basedOnCategory(@PathVariable("name") String name) {
+        return ResponseEntity.ok(productRepository.basedOnCategory(name));
     }
 
     @GetMapping("/browse/listProduct")
-    public List<Product> listProduct() {
-        return productRepository.getAllProducts();
+    public ResponseEntity<List<Product>> listProduct() {
+        return ResponseEntity.ok(productRepository.getAllProducts());
     }
 
 }
