@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import com.icore.ecommerce_platform.dto.OrderResponseDto;
+import jakarta.validation.Valid;
 
 /**
  * REST endpoint for placing customer orders under {@code /api/order}.
@@ -30,7 +31,7 @@ public class OrderController {
     }
 
     @PostMapping("/place")
-    public ResponseEntity<OrderResponseDto> placeOrder(@RequestBody OrderFormDto orderFormDto) {
+    public ResponseEntity<OrderResponseDto> placeOrder(@Valid @RequestBody OrderFormDto orderFormDto) {
         OrderResponseDto response = orderService.placeOrder(orderFormDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
