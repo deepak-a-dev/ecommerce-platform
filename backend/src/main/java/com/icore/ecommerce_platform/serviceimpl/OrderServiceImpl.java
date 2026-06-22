@@ -45,10 +45,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderResponseDto placeOrder(OrderFormDto orderFormDto) {
-        User user = userRepository.usernameVerification(orderFormDto.getUsername());
+    public OrderResponseDto placeOrder(String username, OrderFormDto orderFormDto) {
+        User user = userRepository.usernameVerification(username);
         if (user == null) {
-            throw new ResourceNotFoundException("User '" + orderFormDto.getUsername() + "' not found");
+            throw new ResourceNotFoundException("User '" + username + "' not found");
         }
 
         Order order = new Order();

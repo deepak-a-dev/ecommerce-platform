@@ -36,8 +36,9 @@ public class OrderController {
     }
 
     @PostMapping("/place")
-    public ResponseEntity<OrderResponseDto> placeOrder(@Valid @RequestBody OrderFormDto orderFormDto) {
-        OrderResponseDto response = orderService.placeOrder(orderFormDto);
+    public ResponseEntity<OrderResponseDto> placeOrder(@AuthenticationPrincipal User user,
+                                                       @Valid @RequestBody OrderFormDto orderFormDto) {
+        OrderResponseDto response = orderService.placeOrder(user.getUsername(), orderFormDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

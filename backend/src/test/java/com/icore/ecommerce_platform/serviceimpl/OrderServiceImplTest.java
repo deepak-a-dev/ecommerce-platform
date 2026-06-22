@@ -39,9 +39,8 @@ class OrderServiceImplTest {
     @InjectMocks private OrderServiceImpl orderService;
 
     // small helper to build a one-item order form
-    private OrderFormDto orderFor(String username, String productName, int qty) {
+    private OrderFormDto orderFor(String productName, int qty) {
         OrderFormDto form = new OrderFormDto();
-        form.setUsername(username);
         form.setProductList(List.of(new ProductNameQtyDto(productName, qty)));
         return form;
     }
@@ -50,7 +49,7 @@ class OrderServiceImplTest {
     void placeOrder_throwsWhenUserNotFound() {
         when(userRepository.usernameVerification("ghost")).thenReturn(null);
 
-        assertThatThrownBy(() -> orderService.placeOrder(orderFor("ghost", "Widget", 1)))
+        assertThatThrownBy(() -> orderService.placeOrder("ghost", orderFor("Widget", 1)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("ghost");
 
@@ -62,7 +61,7 @@ class OrderServiceImplTest {
         when(userRepository.usernameVerification("admin")).thenReturn(new User());
         when(productRepository.verifyProductAvailability("Ghost")).thenReturn(null);
 
-        assertThatThrownBy(() -> orderService.placeOrder(orderFor("admin", "Ghost", 1)))
+        assertThatThrownBy(() -> orderService.placeOrder("admin", orderFor("Ghost", 1)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("Ghost");
 
@@ -81,7 +80,7 @@ class OrderServiceImplTest {
                 .thenReturn(new ProductAvailabilityDto(1, "Widget", "Misc", 100.0, true));
         when(productRepository.getProductByProductName("Widget")).thenReturn(widget);
 
-        assertThatThrownBy(() -> orderService.placeOrder(orderFor("admin", "Widget", 5)))
+        assertThatThrownBy(() -> orderService.placeOrder("admin", orderFor("Widget", 5)))
                 .isInstanceOf(InsufficientStockException.class)
                 .hasMessageContaining("Widget");
 
@@ -104,7 +103,7 @@ class OrderServiceImplTest {
                 .thenReturn(new ProductAvailabilityDto(1, "Widget", "Misc", 100.0, true));
         when(productRepository.getProductByProductName("Widget")).thenReturn(widget);
 
-        OrderResponseDto result = orderService.placeOrder(orderFor("admin", "Widget", 2));
+        OrderResponseDto result = orderService.placeOrder("admin", orderFor("Widget", 2));
 
         // the returned DTO
         assertThat(result.total()).isEqualTo(200.0);          // 2 x 100
