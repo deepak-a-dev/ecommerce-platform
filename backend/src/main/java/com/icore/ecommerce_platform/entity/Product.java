@@ -32,4 +32,7 @@ public class Product {
 
     @Column(name = "pro_status")
     private boolean productStatus;
+
+    @Column(name = "stock")
+    private int stock;
 }

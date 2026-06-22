@@ -21,6 +21,7 @@ import com.icore.ecommerce_platform.exception.ResourceNotFoundException;
 import com.icore.ecommerce_platform.dto.OrderResponseDto;
 import com.icore.ecommerce_platform.dto.OrderItemResponseDto;
 import jakarta.transaction.Transactional;
+import com.icore.ecommerce_platform.exception.InsufficientStockException;
 
 /**
  * Default implementation of {@link OrderService}. Builds an order from the
@@ -61,6 +62,15 @@ public class OrderServiceImpl implements OrderService {
             }
 
             Product product = productRepository.getProductByProductName(item.getProductName());
+
+            if (product.getStock() < item.getQty()) {
+                throw new InsufficientStockException(
+                        "Insufficient stock for '" + product.getProductName()
+                                + "': requested " + item.getQty() + ", available " + product.getStock());
+            }
+            product.setStock(product.getStock() - item.getQty());
+            productRepository.save(product);
+
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(product);
             orderItem.setOrder(order);

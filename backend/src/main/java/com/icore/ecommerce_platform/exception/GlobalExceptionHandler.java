@@ -76,4 +76,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(body);
     }
 
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ApiError> handleInsufficientStock(InsufficientStockException ex) {
+        ApiError body = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),   // 409
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
+
 }
