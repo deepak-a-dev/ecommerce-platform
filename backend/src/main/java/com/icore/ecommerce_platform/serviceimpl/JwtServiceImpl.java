@@ -27,6 +27,9 @@ public class JwtServiceImpl {
 
     private final TokenRepository tokenRepository;
 
+    private static final long ACCESS_TOKEN_EXPIRY_MS = 15 * 60 * 1000L;            // 15 minutes
+    private static final long REFRESH_TOKEN_EXPIRY_MS = 7L * 24 * 60 * 60 * 1000;  // 7 days
+
     public JwtServiceImpl(@Value("${app.jwt.secret}") String secretKey, TokenRepository tokenRepository) {
         this.secretKey = secretKey;
         this.tokenRepository = tokenRepository;
@@ -68,15 +71,20 @@ public class JwtServiceImpl {
     }
 
     public String generateToken(User user) {
-        String token = Jwts
-                .builder()
+        return buildToken(user, ACCESS_TOKEN_EXPIRY_MS);
+    }
+
+    public String generateRefreshToken(User user) {
+        return buildToken(user, REFRESH_TOKEN_EXPIRY_MS);
+    }
+
+    private String buildToken(User user, long expiryMs) {
+        return Jwts.builder()
                 .subject(user.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+                .expiration(new Date(System.currentTimeMillis() + expiryMs))
                 .signWith(getSignKey())
                 .compact();
-
-        return token;
     }
 
     private SecretKey getSignKey() {

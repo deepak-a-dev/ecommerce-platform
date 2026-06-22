@@ -17,6 +17,10 @@ import com.icore.ecommerce_platform.dto.UserPublicAccessDto;
 import com.icore.ecommerce_platform.dto.AuthResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
+import com.icore.ecommerce_platform.dto.RefreshTokenRequestDto;
+import com.icore.ecommerce_platform.exception.InvalidRequestException;
+import com.icore.ecommerce_platform.exception.ResourceNotFoundException;
+import io.jsonwebtoken.JwtException;
 
 /**
  * Default implementation of {@link UserService}.
@@ -75,6 +79,7 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findByUsername(loginFormDto.getUsername()).orElseThrow();
         String token = jwtService.generateToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
         // before saving query the data
         List<Token> validTokenListByUser = tokenRepository.findAllTokenByUser(user.getUserId());
@@ -90,12 +95,12 @@ public class UserServiceImpl implements UserService {
         token1.setToken(token);
         token1.setLoggedOut(false);
         token1.setCreation(LocalDateTime.now());
-        token1.setExpiration(LocalDateTime.now().plusMinutes(10));
+        token1.setExpiration(LocalDateTime.now().plusMinutes(15));
         token1.setUser(user);
         tokenRepository.save(token1);
 
 
-        return new AuthResponseDto(token);
+        return new AuthResponseDto(token, refreshToken);
     }
 
     @Override
@@ -105,5 +110,33 @@ public class UserServiceImpl implements UserService {
                         u.getUserId(), u.getFirstName(), u.getLastName(),
                         u.getPhoneNumber(), u.getEmail(), u.getUsername()))
                 .toList();
+    }
+
+    @Override
+    public AuthResponseDto refreshToken(RefreshTokenRequestDto request) {
+        String refreshToken = request.refreshToken();
+
+        String username;
+        try {
+            username = jwtService.extractUsername(refreshToken);   // throws if invalid/expired
+        } catch (JwtException ex) {
+            throw new InvalidRequestException("Invalid or expired refresh token");
+        }
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        String newAccessToken = jwtService.generateToken(user);
+
+        // store the new access token so the JWT filter's DB check accepts it
+        Token tokenEntity = new Token();
+        tokenEntity.setToken(newAccessToken);
+        tokenEntity.setLoggedOut(false);
+        tokenEntity.setCreation(LocalDateTime.now());
+        tokenEntity.setExpiration(LocalDateTime.now().plusMinutes(15));
+        tokenEntity.setUser(user);
+        tokenRepository.save(tokenEntity);
+
+        return new AuthResponseDto(newAccessToken, refreshToken);
     }
 }

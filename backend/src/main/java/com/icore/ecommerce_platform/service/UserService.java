@@ -7,6 +7,7 @@ import com.icore.ecommerce_platform.dto.UserPublicAccessDto;
 import com.icore.ecommerce_platform.dto.AuthResponseDto;
 
 import java.util.List;
+import com.icore.ecommerce_platform.dto.RefreshTokenRequestDto;
 
 /**
  * Business operations for user accounts: registration, login (JWT issuance),
@@ -19,4 +20,6 @@ public interface UserService {
     AuthResponseDto userLogin(LoginFormDto loginFormDto);
 
     List<UserPublicAccessDto> getAllUsers();
+
+    AuthResponseDto refreshToken(RefreshTokenRequestDto request);
 }

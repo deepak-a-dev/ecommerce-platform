@@ -19,6 +19,7 @@ import java.util.List;
 import com.icore.ecommerce_platform.dto.MessageResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import com.icore.ecommerce_platform.dto.RefreshTokenRequestDto;
 
 /**
  * REST endpoints for user-facing operations under {@code /api/user}:
@@ -86,4 +87,8 @@ public class UserController {
         return ResponseEntity.ok(productRepository.searchProducts(category, search, pageable));
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponseDto> refresh(@Valid @RequestBody RefreshTokenRequestDto request) {
+        return ResponseEntity.ok(userService.refreshToken(request));
+    }
 }
