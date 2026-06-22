@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -33,4 +35,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT p FROM Product p WHERE p.productCategory = :name")
     List<Product> basedOnCategory(String name);
+
+    @Query("SELECT p FROM Product p WHERE p.productStatus = true AND " +
+            "(:category IS NULL OR p.productCategory = :category) AND " +
+            "(:search IS NULL OR LOWER(p.productName) LIKE LOWER(CONCAT('%', :search, '%')))")
+    Page<Product> searchProducts(String category, String search, Pageable pageable);
 }

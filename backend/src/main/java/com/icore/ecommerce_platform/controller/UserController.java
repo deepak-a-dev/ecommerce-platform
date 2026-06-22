@@ -17,6 +17,8 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 import com.icore.ecommerce_platform.dto.MessageResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * REST endpoints for user-facing operations under {@code /api/user}:
@@ -74,6 +76,14 @@ public class UserController {
     @GetMapping("/browse/listProduct")
     public ResponseEntity<List<Product>> listProduct() {
         return ResponseEntity.ok(productRepository.getAllProducts());
+    }
+
+    @GetMapping("/browse/products")
+    public ResponseEntity<Page<Product>> searchProducts(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String search,
+            Pageable pageable) {
+        return ResponseEntity.ok(productRepository.searchProducts(category, search, pageable));
     }
 
 }
