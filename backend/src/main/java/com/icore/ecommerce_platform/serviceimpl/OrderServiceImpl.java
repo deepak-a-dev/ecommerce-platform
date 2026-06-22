@@ -22,6 +22,7 @@ import com.icore.ecommerce_platform.dto.OrderResponseDto;
 import com.icore.ecommerce_platform.dto.OrderItemResponseDto;
 import jakarta.transaction.Transactional;
 import com.icore.ecommerce_platform.exception.InsufficientStockException;
+import com.icore.ecommerce_platform.dto.OrderSummaryDto;
 
 /**
  * Default implementation of {@link OrderService}. Builds an order from the
@@ -96,5 +97,12 @@ public class OrderServiceImpl implements OrderService {
 
         return new OrderResponseDto(
                 order.getOrderId(), user.getUsername(), order.getDateOfOrder(), total, items);
+    }
+
+    @Override
+    public List<OrderSummaryDto> getOrderHistory(String username) {
+        return orderRepository.findOrdersByUsername(username).stream()
+                .map(o -> new OrderSummaryDto(o.getOrderId(), o.getDateOfOrder(), o.getTotal()))
+                .toList();
     }
 }
