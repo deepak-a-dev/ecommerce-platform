@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import com.icore.ecommerce_platform.dto.UpdateCartItemRequestDto;
 
 /**
  * REST endpoints for the authenticated user's shopping cart under {@code /api/cart}.
@@ -31,5 +32,24 @@ public class CartController {
     @GetMapping
     public ResponseEntity<CartResponseDto> getCart(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(cartService.getCart(user));
+    }
+
+    @PutMapping("/items/{productId}")
+    public ResponseEntity<CartResponseDto> updateQuantity(@AuthenticationPrincipal User user,
+                                                          @PathVariable int productId,
+                                                          @Valid @RequestBody UpdateCartItemRequestDto request) {
+        return ResponseEntity.ok(cartService.updateQuantity(user, productId, request.quantity()));
+    }
+
+    @DeleteMapping("/items/{productId}")
+    public ResponseEntity<CartResponseDto> removeItem(@AuthenticationPrincipal User user,
+                                                      @PathVariable int productId) {
+        return ResponseEntity.ok(cartService.removeItem(user, productId));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> clearCart(@AuthenticationPrincipal User user) {
+        cartService.clearCart(user);
+        return ResponseEntity.noContent().build();
     }
 }

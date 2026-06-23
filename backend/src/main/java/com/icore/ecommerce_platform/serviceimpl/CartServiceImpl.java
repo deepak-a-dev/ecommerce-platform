@@ -14,6 +14,7 @@ import com.icore.ecommerce_platform.service.CartService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import jakarta.transaction.Transactional;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -71,5 +72,38 @@ public class CartServiceImpl implements CartService {
         double grandTotal = itemDtos.stream().mapToDouble(CartItemResponseDto::subTotal).sum();
 
         return new CartResponseDto(itemDtos, totalItems, grandTotal);
+    }
+
+    @Override
+    public CartResponseDto updateQuantity(User user, int productId, int quantity) {
+        CartItem cartItem = cartItemRepository
+                .findByUser_UserIdAndProduct_ProductId(user.getUserId(), productId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Product with id " + productId + " is not in the cart"));
+
+        if (quantity > cartItem.getProduct().getStock()) {
+            throw new InsufficientStockException(
+                    "Insufficient stock for '" + cartItem.getProduct().getProductName()
+                            + "': requested " + quantity + ", available " + cartItem.getProduct().getStock());
+        }
+        cartItem.setQuantity(quantity);
+        cartItemRepository.save(cartItem);
+        return getCart(user);
+    }
+
+    @Override
+    public CartResponseDto removeItem(User user, int productId) {
+        CartItem cartItem = cartItemRepository
+                .findByUser_UserIdAndProduct_ProductId(user.getUserId(), productId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Product with id " + productId + " is not in the cart"));
+        cartItemRepository.delete(cartItem);
+        return getCart(user);
+    }
+
+    @Override
+    @Transactional
+    public void clearCart(User user) {
+        cartItemRepository.deleteByUser_UserId(user.getUserId());
     }
 }

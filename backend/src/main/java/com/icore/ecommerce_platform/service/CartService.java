@@ -5,6 +5,14 @@ import com.icore.ecommerce_platform.dto.CartResponseDto;
 import com.icore.ecommerce_platform.entity.User;
 
 public interface CartService {
+
     CartResponseDto addToCart(User user, AddToCartRequestDto request);
+
     CartResponseDto getCart(User user);
+
+    CartResponseDto updateQuantity(User user, int productId, int quantity);
+
+    CartResponseDto removeItem(User user, int productId);
+
+    void clearCart(User user);
 }
