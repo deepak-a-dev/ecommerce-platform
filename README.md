@@ -17,11 +17,13 @@ are on the way.
 
 ## 🧰 Tech Stack
 
-**Backend (current)**
+**Backend**
 - Java 17 · Spring Boot 3.2
-- Spring Security with JWT authentication
+- Spring Security with JWT (access + refresh tokens)
 - Spring Data JPA / Hibernate
-- MySQL
+- MySQL · Flyway migrations
+- Bean Validation · OpenAPI/Swagger (springdoc)
+- JUnit 5 + Mockito (unit tests)
 - Maven
 
 **Planned**
@@ -34,11 +36,15 @@ are on the way.
 
 ## ✅ Current Features (Backend API)
 
-- User registration & login with JWT-based authentication
-- Role-based access control (USER / ADMIN)
-- Product catalog — create, update, remove, and browse by category
-- Order placement with line items and order totals
+- User registration & login with **JWT authentication + refresh tokens**
+- Role-based access control (USER / ADMIN) with an auto-seeded admin
+- Product catalog — create, update, remove, and **search / filter / paginate**
+- **Shopping cart** — add, update, remove, clear
+- **Checkout** → order placement with line items, totals, and stock decrement
+- **Order history** scoped to the authenticated user
+- Stock / inventory tracking
 - Forgot-password flow via emailed one-time password (OTP)
+- Consistent error responses, request validation, and interactive **Swagger** API docs
 
 ---
 
@@ -46,22 +52,22 @@ are on the way.
 
 **Phase 0 — Project setup & version control** ✅ Done
 
-### Phase 1 — Backend modernization & hardening
-- [ ] Return `ResponseEntity<DTO>` with correct HTTP status codes
-- [ ] Global exception handling via `@RestControllerAdvice`
-- [ ] Bean Validation (`@Valid`) on all request DTOs
-- [ ] Response DTOs everywhere (never expose entities directly)
-- [ ] Bug fixes, transactional order placement, and stock/inventory tracking
-- [ ] Admin bootstrapping (seeded admin or promote endpoint)
-- [ ] Flyway database migrations
-- [ ] OpenAPI / Swagger documentation
-- [ ] Unit & integration tests (Testcontainers)
+### Phase 1 — Backend modernization & hardening ✅ Done
+- [x] Return `ResponseEntity<DTO>` with correct HTTP status codes
+- [x] Global exception handling via `@RestControllerAdvice`
+- [x] Bean Validation (`@Valid`) on all request DTOs
+- [x] Response DTOs everywhere (never expose entities directly)
+- [x] Bug fixes, transactional order placement, and stock/inventory tracking
+- [x] Admin bootstrapping (seeded admin)
+- [x] Flyway database migrations
+- [x] OpenAPI / Swagger documentation
+- [x] Unit tests (integration tests with Testcontainers planned for Phase 4)
 
-### Phase 2 — New features
-- [ ] Persistent cart
-- [ ] Order history
-- [ ] Product search + pagination + category filter
-- [ ] Refresh tokens
+### Phase 2 — New features ✅ Done
+- [x] Persistent cart (add / update / remove / clear / checkout)
+- [x] Order history
+- [x] Product search + pagination + category filter
+- [x] Refresh tokens
 - [ ] (Optional) Stripe test-mode checkout, product image upload
 
 ### Phase 3 — Frontend
