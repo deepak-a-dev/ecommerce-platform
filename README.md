@@ -101,10 +101,67 @@ Phase 0 → 1 → (start Phase 3 in parallel once API contracts are stable) → 
 
 > Requires JDK 17+ and a running MySQL instance.
 
-1. Create the database schema named `ecommerce_platform`.
-2. Set the required environment variables — see [`backend/.env.example`](backend/.env.example).
-3. From the `backend/` directory, start the app:
-   ```bash
-   ./mvnw spring-boot:run        # Windows: mvnw.cmd spring-boot:run
+Step 1. Create an **empty** database named `ecommerce_platform` (Flyway builds the tables on startup):
+   ```sql
+   CREATE DATABASE ecommerce_platform;
    ```
-4. The API will be available at `http://localhost:8080`.
+Step 2. Set up the required **environment variables** — see the [section below](#-environment-variables).<br>
+Step 3. Once Environment Variables are set, from the `backend/` directory, start the app
+(on Windows, use `mvnw.cmd` instead of `./mvnw`):
+   ```bash
+   ./mvnw spring-boot:run                                  # default
+      (or)
+   ./mvnw spring-boot:run -Dspring-boot.run.profiles=demo  # with a pre-populated sample catalogue
+   ```
+Step 4. The API is available at `http://localhost:8080`.<br>
+Step 5. Explore and try the endpoints interactively via **Swagger UI** at
+   [`http://localhost:8080/swagger-ui.html`](http://localhost:8080/swagger-ui.html).
+
+### 🔑 Environment variables
+The app reads its secrets/config from environment variables and **won't start without them**.
+The full list (with placeholder values) is in [`backend/.env.example`](backend/.env.example);
+the ones you must set:
+
+| Variable | Description                                                                                        |
+|----------|----------------------------------------------------------------------------------------------------|
+| `DB_PASSWORD` | Password of your MySQL `root` user                                                                 |
+| `MAIL_USERNAME` · `MAIL_PASSWORD` | Gmail address + [app password](https://support.google.com/accounts/answer/185833) (for OTP emails) |
+| `JWT_SECRET` | A 256-bit hex secret for signing JWTs (generate one — see below ⬇️)                                |
+| `ADMIN_PASSWORD` | Password for the auto-seeded admin account                                                         |
+
+> `DB_URL`, `DB_USERNAME`, `ADMIN_USERNAME`, and `ADMIN_EMAIL` have sensible defaults, so they're optional.
+> Not using the password-reset email? Any placeholder works for the mail vars — the app only contacts SMTP when actually sending an OTP.
+
+**How to Generate a `JWT_SECRET`:**<br>
+Run the below command. Copy the generated token and paste it in JWT_SECRET field
+```bash
+# macOS / Linux (or Git Bash on Windows)
+openssl rand -hex 32
+```
+```powershell
+# Windows PowerShell
+$b = [byte[]]::new(32); [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); ($b | ForEach-Object { $_.ToString('x2') }) -join ''
+```
+
+**How to Setup the `Environment Variables`:**<br>
+Provide them in **either** of these ways:
+- **IDE (IntelliJ):** Run → Edit Configurations → *Environment variables*.
+
+**— OR —**
+
+- **Shell**, before running the app:
+  ```bash
+  # macOS / Linux
+  export DB_PASSWORD=... MAIL_USERNAME=... MAIL_PASSWORD=... JWT_SECRET=... ADMIN_PASSWORD=...
+  ```
+  ```powershell
+  # Windows PowerShell
+  $env:DB_PASSWORD="..."; $env:MAIL_USERNAME="..."; $env:MAIL_PASSWORD="..."; $env:JWT_SECRET="..."; $env:ADMIN_PASSWORD="..."
+  ```
+
+### 🧪 Try it out
+- An **admin** account is seeded on first run (credentials from your `ADMIN_*` env vars).
+- If you want a preloaded product catalogue, run the second command in Step 3.
+- Typical flow: **register** → **login** (get a JWT) → **browse** products → **add to cart**
+  → **checkout** → view **order history**.
+- In Swagger UI, click **Authorize**, paste the access token generated during login, and call the secured endpoints.
