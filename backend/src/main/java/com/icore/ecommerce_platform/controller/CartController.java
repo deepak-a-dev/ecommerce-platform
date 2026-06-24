@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import com.icore.ecommerce_platform.dto.UpdateCartItemRequestDto;
+import com.icore.ecommerce_platform.dto.OrderResponseDto;
+import org.springframework.http.HttpStatus;
 
 /**
  * REST endpoints for the authenticated user's shopping cart under {@code /api/cart}.
@@ -51,5 +53,10 @@ public class CartController {
     public ResponseEntity<Void> clearCart(@AuthenticationPrincipal User user) {
         cartService.clearCart(user);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/checkout")
+    public ResponseEntity<OrderResponseDto> checkout(@AuthenticationPrincipal User user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.checkout(user));
     }
 }

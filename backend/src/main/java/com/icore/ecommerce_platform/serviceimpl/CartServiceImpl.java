@@ -11,20 +11,30 @@ import com.icore.ecommerce_platform.entity.User;
 import com.icore.ecommerce_platform.exception.InsufficientStockException;
 import com.icore.ecommerce_platform.exception.ResourceNotFoundException;
 import com.icore.ecommerce_platform.service.CartService;
+import com.icore.ecommerce_platform.service.OrderService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import jakarta.transaction.Transactional;
+import com.icore.ecommerce_platform.dto.OrderFormDto;
+import com.icore.ecommerce_platform.dto.OrderResponseDto;
+import com.icore.ecommerce_platform.dto.ProductNameQtyDto;
+import com.icore.ecommerce_platform.exception.InvalidRequestException;
+
 
 @Service
 public class CartServiceImpl implements CartService {
 
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
+    private final OrderService orderService;
 
-    public CartServiceImpl(CartItemRepository cartItemRepository, ProductRepository productRepository) {
+    public CartServiceImpl(CartItemRepository cartItemRepository,
+                           ProductRepository productRepository,
+                           OrderService orderService) {
         this.cartItemRepository = cartItemRepository;
         this.productRepository = productRepository;
+        this.orderService = orderService;
     }
 
     @Override
@@ -105,5 +115,29 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public void clearCart(User user) {
         cartItemRepository.deleteByUser_UserId(user.getUserId());
+    }
+
+    @Override
+    @Transactional
+    public OrderResponseDto checkout(User user) {
+        List<CartItem> cartItems = cartItemRepository.findByUser_UserId(user.getUserId());
+        if (cartItems.isEmpty()) {
+            throw new InvalidRequestException("Cart is empty");
+        }
+
+        // turn the cart into the productList the order service understands
+        List<ProductNameQtyDto> productList = cartItems.stream()
+                .map(ci -> new ProductNameQtyDto(ci.getProduct().getProductName(), ci.getQuantity()))
+                .toList();
+
+        OrderFormDto orderForm = new OrderFormDto();
+        orderForm.setProductList(productList);
+
+        // reuse the existing order logic (stock check + decrement + order record)
+        OrderResponseDto order = orderService.placeOrder(user.getUsername(), orderForm);
+
+        // success → empty the cart
+        cartItemRepository.deleteByUser_UserId(user.getUserId());
+        return order;
     }
 }
